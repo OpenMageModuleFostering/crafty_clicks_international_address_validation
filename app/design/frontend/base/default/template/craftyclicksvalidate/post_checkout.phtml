@@ -310,7 +310,7 @@ document.observe('dom:loaded', function() {
 								region: $('region').getValue()
 							},
 							onSuccess: function(transport){
-								$('correct_box').update('<?php echo $conf['craftyclicksvalidate']['finish_text']; ?>');
+								$('correct_box').update('<?php echo addslashes($conf['craftyclicksvalidate']['finish_text']); ?>');
 							}
 						});
 					});
@@ -332,8 +332,6 @@ function getDataFromMaps(element){
 	var result = new Object();
 	result = output;
 	result.formatted = element.formatted_address;
-
-	//console.log(result);
 	return result;
 
 }

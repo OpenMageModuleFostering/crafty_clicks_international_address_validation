@@ -1,16 +1,6 @@
 <?php
 class CraftyClicksValidate_AjaxController extends Mage_Core_Controller_Front_Action{
 
-	public function indexAction()
-	{
-		echo 'respect my autoritah';
-		$order_id = Mage::getSingleton('checkout/session')->getLastRealOrderId();
-		//$_GET["order_id"];
-		$order = Mage::getSingleton('sales/order')->loadByIncrementId($order_id);
-		$shippingAddress = Mage::getModel('sales/order_address')->load($order->shipping_address_id);
-		print_r($shippingAddress);
-	}
-
 	public function updateAction(){
 		$order_id = Mage::getSingleton('checkout/session')->getLastRealOrderId();
 		//$_GET["order_id"];
@@ -44,7 +34,7 @@ class CraftyClicksValidate_AjaxController extends Mage_Core_Controller_Front_Act
 			$shippingAddress->addData($data);
 
 			$shippingAddress->implodeStreetAddress()->save();
-			echo 'ok';
+			header("Status: 200");
 		}
 
 	}
