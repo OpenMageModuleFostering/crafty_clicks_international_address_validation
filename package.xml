@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Crafty_Clicks_International_Address_Validation</name>
-    <version>0.2.2</version>
+    <version>0.2.3</version>
     <stability>stable</stability>
     <license uri="http://www.opensource.org/licenses/osl-3.0.php">OSL v3.0</license>
     <channel>community</channel>
@@ -11,6 +11,9 @@
 &#xD;
 Upon completing a checkout, the shipping address gets validated, to ensure the existence of the location. In case the address cannot be confirmed, suggestions to fix the address will be shown, with the option to manually check and fix the address.</description>
     <notes>Release History&#xD;
+v0.2.3&#xD;
+* Updated maps settings for a cleaner interface&#xD;
+* Fix: v0.2.2 had a special no results condition under which the correction page didn't appear.&#xD;
 v0.2.2&#xD;
 * Fixed issue with order of house number and street&#xD;
 * Fixed problem when no results found&#xD;
@@ -31,9 +34,9 @@ v0.1.1&#xD;
 v0.1.0&#xD;
 * Initial Release</notes>
     <authors><author><name>Crafty Clicks</name><user>styloa</user><email>support@craftyclicks.co.uk</email></author></authors>
-    <date>2016-10-06</date>
-    <time>15:48:53</time>
-    <contents><target name="mage"><dir name="app"><dir name="etc"><dir name="modules"><file name="CraftyClicksValidate.xml" hash="2c6649e35bab8258530b5e29d21cd889"/><file name="Craftyclicks_Googleaddressvalidate.xml" hash="98941aa74d74ad1b38e7e115e8fa2054"/></dir></dir><dir name="code"><dir name="community"><dir name="Craftyclicks"><dir name="Googleaddressvalidate"><dir><dir name="Helper"><file name="Data.php" hash="88b3d1efbb6062cca7c6e1107ef56417"/></dir><dir name="controllers"><file name="AjaxController.php" hash="d104bd4b0d88e89251aa8b58a5cbee6e"/></dir><dir name="data"><dir name="craftyclicks_googleaddressvalidate_setup"><file name="data-upgrade-0.1.6-0.2.0.php" hash="a1d598c914774d28bd4fab27961cda02"/></dir></dir><dir name="etc"><file name="config.xml" hash="118ef7182cc5c689ee39a9d97e03857a"/><file name="system.xml" hash="19f1436c911b1c59771b167eaac75049"/></dir></dir></dir></dir></dir></dir><dir name="design"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="craftyclicks_googleaddressvalidate.xml" hash="b785571ac8a14fcde43cb76dce15908f"/></dir><dir name="template"><dir name="craftyclicks"><dir name="googleaddressvalidate"><file name="post_checkout.phtml" hash="827189c5e2709a06803c133c84d0a532"/></dir></dir></dir></dir></dir></dir></dir></dir><dir name="skin"><dir name="frontend"><dir name="base"><dir name="default"><dir name="css"><dir name="craftyclicks"><dir name="googleaddressvalidate"><file name="validate.css" hash="353e6e8267ce0a7fccad15bc1d1418cd"/><file name="validate_old.css" hash="3a4dd9986bdf93462afb0c6a20ac838e"/></dir></dir></dir><dir name="images"><dir name="craftyclicks"><dir name="googleaddressvalidate"><file name="crafty_validate_busy.gif" hash="7660c91e294e91f80219d3c8f6512dca"/></dir></dir></dir></dir></dir></dir></dir></target></contents>
+    <date>2016-10-11</date>
+    <time>08:11:29</time>
+    <contents><target name="mage"><dir name="app"><dir name="etc"><dir name="modules"><file name="CraftyClicksValidate.xml" hash="46eeefc26f6ae3b592c0983123f6ed36"/><file name="Craftyclicks_Googleaddressvalidate.xml" hash="98941aa74d74ad1b38e7e115e8fa2054"/></dir></dir><dir name="code"><dir name="community"><dir name="Craftyclicks"><dir name="Googleaddressvalidate"><dir><dir name="Helper"><file name="Data.php" hash="88b3d1efbb6062cca7c6e1107ef56417"/></dir><dir name="controllers"><file name="AjaxController.php" hash="d104bd4b0d88e89251aa8b58a5cbee6e"/></dir><dir name="data"><dir name="craftyclicks_googleaddressvalidate_setup"><file name="data-upgrade-0.1.6-0.2.0.php" hash="a1d598c914774d28bd4fab27961cda02"/></dir></dir><dir name="etc"><file name="config.xml" hash="ec550e123f7215738b2a45d0e04d437c"/><file name="system.xml" hash="19f1436c911b1c59771b167eaac75049"/></dir></dir></dir></dir></dir></dir><dir name="design"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="craftyclicks_googleaddressvalidate.xml" hash="b785571ac8a14fcde43cb76dce15908f"/></dir><dir name="template"><dir name="craftyclicks"><dir name="googleaddressvalidate"><file name="post_checkout.phtml" hash="f0358fcd90711350b6a86d9900a03e48"/></dir></dir></dir></dir></dir></dir></dir></dir><dir name="skin"><dir name="frontend"><dir name="base"><dir name="default"><dir name="css"><dir name="craftyclicks"><dir name="googleaddressvalidate"><file name="validate.css" hash="353e6e8267ce0a7fccad15bc1d1418cd"/><file name="validate_old.css" hash="3a4dd9986bdf93462afb0c6a20ac838e"/></dir></dir></dir><dir name="images"><dir name="craftyclicks"><dir name="googleaddressvalidate"><file name="crafty_validate_busy.gif" hash="7660c91e294e91f80219d3c8f6512dca"/></dir></dir></dir></dir></dir></dir></dir></target></contents>
     <compatible/>
     <dependencies><required><php><min>5.3.0</min><max>7.9.0</max></php></required></dependencies>
 </package>
