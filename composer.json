@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/Crafty_Clicks_International_Address_Validation",
+    "type": "magento-module",
+    "license": "OSL-v3.0",
+    "homepage": "",
+    "description": "International address validation based on google maps api.",
+    "authors": [
+    {
+        "name": "Crafty Clicks",
+        "email": "support@craftyclicks.co.uk"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
