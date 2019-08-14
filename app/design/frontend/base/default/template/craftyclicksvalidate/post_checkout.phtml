@@ -72,7 +72,7 @@ if($conf['craftyclicksvalidate']['active'] && !($shippingAddress->country_id == 
 				
 	</div>
 </div>
-<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script src="//maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript">
 
 <?php
@@ -119,194 +119,197 @@ document.observe('dom:loaded', function() {
 	}
 	$loading_image = $this->getSkinUrl('images/craftyclicksvalidate/'.$loading_image);
 	?>
+	// check if google CDN loaded properly
+	if(typeof google !== "undefined"){
 
-	var html = '<div class="buttons-set" id="correct_box"><img style="margin: auto;" src="<?php echo $loading_image; ?>"/></div>';
-	
-	$$('.buttons-set')[0].insert({before :html});
-
-
-	var address = shipping.street+" "+shipping.postcode+" "+shipping.city+" "+shipping.country_id;
-
-	var geocoder = new google.maps.Geocoder();
-
-	var original = new Object();
-
-	original.street = shipping.street.toLowerCase();
-	original.postalcode = shipping.postcode.toLowerCase();
-	original.city = shipping.city.toLowerCase();
+		var html = '<div class="buttons-set" id="correct_box"><img style="margin: auto;" src="<?php echo $loading_image; ?>"/></div>';
+		
+		$$('.buttons-set')[0].insert({before :html});
 
 
-	var suggestions = new Array();
-	var data = new Array();
+		var address = shipping.street+" "+shipping.postcode+" "+shipping.city+" "+shipping.country_id;
 
-	if (geocoder) {
-		geocoder.geocode({ 'address': address }, function (results, status) {
-			var doCheck = false;
-			//if gmaps fails to locate, then we have some super bogus address.
-			if (status == google.maps.GeocoderStatus.OK) {
-				//parse gmaps data into some more useable format.
-				for(var i = 0; i< results.length; i++ ){
-					data.push(getDataFromMaps(results[i]));
-				}
+		var geocoder = new google.maps.Geocoder();
 
-				//first hit on gmaps is the best find; check if it's premise level.
-				if(typeof data[0].country !== "undefined" && typeof data[0].locality  !== "undefined" && typeof data[0].postal_code !== "undefined" &&	typeof data[0].route !== "undefined" && typeof data[0].street_number !== "undefined"){
+		var original = new Object();
 
-					var mapsaddress = new Object();
+		original.street = shipping.street.toLowerCase();
+		original.postalcode = shipping.postcode.toLowerCase();
+		original.city = shipping.city.toLowerCase();
 
-					//figure out the correct order of housenumber / street.
-					if(data[0].formatted.indexOf(data[0].route) > data[0].formatted.indexOf(data[0].street_number))
-						mapsaddress.street = data[0].street_number.long_name.toLowerCase() + " " + data[0].route.long_name.toLowerCase();
-					else						
-						mapsaddress.street = data[0].route.long_name.toLowerCase() + " " + data[0].street_number.long_name.toLowerCase();
 
-					mapsaddress.postalcode = data[0].postal_code.long_name.toLowerCase();
-					mapsaddress.city = data[0].locality.long_name.toLowerCase();
+		var suggestions = new Array();
+		var data = new Array();
 
-					var old_country_id = shipping.country_id.toLowerCase();
+		if (geocoder) {
+			geocoder.geocode({ 'address': address }, function (results, status) {
+				var doCheck = false;
+				//if gmaps fails to locate, then we have some super bogus address.
+				if (status == google.maps.GeocoderStatus.OK) {
+					//parse gmaps data into some more useable format.
+					for(var i = 0; i< results.length; i++ ){
+						data.push(getDataFromMaps(results[i]));
+					}
 
-					if(old_country_id == data[0].country.long_name.toLowerCase() || old_country_id == data[0].country.short_name.toLowerCase()){
-						//if countries match AND premise level do not match:
-						if(JSON.stringify(mapsaddress) != JSON.stringify(original)){
+					//first hit on gmaps is the best find; check if it's premise level.
+					if(typeof data[0].country !== "undefined" && typeof data[0].locality  !== "undefined" && typeof data[0].postal_code !== "undefined" &&	typeof data[0].route !== "undefined" && typeof data[0].street_number !== "undefined"){
+
+						var mapsaddress = new Object();
+
+						//figure out the correct order of housenumber / street.
+						if(data[0].formatted.indexOf(data[0].route) > data[0].formatted.indexOf(data[0].street_number))
+							mapsaddress.street = data[0].street_number.long_name.toLowerCase() + " " + data[0].route.long_name.toLowerCase();
+						else						
+							mapsaddress.street = data[0].route.long_name.toLowerCase() + " " + data[0].street_number.long_name.toLowerCase();
+
+						mapsaddress.postalcode = data[0].postal_code.long_name.toLowerCase();
+						mapsaddress.city = data[0].locality.long_name.toLowerCase();
+
+						var old_country_id = shipping.country_id.toLowerCase();
+
+						if(old_country_id == data[0].country.long_name.toLowerCase() || old_country_id == data[0].country.short_name.toLowerCase()){
+							//if countries match AND premise level do not match:
+							if(JSON.stringify(mapsaddress) != JSON.stringify(original)){
+								doCheck = true;
+							}
+							else {
+								//everything matches, remove the validation div. (valid address)
+								$('correct_box').remove();
+							}
+						} else {
 							doCheck = true;
 						}
-						else {
-							//everything matches, remove the validation div. (valid address)
-							$('correct_box').remove();
-						}
+
 					} else {
 						doCheck = true;
+						//not premise level
 					}
 
-				} else {
+				}
+				else {
+					//super bogus data
 					doCheck = true;
-					//not premise level
 				}
 
-			}
-			else {
-				//super bogus data
-				doCheck = true;
-			}
+				if(doCheck){
 
-			if(doCheck){
+					$('correct_box').update($('hidden-correction').innerHTML);
+					$('hidden-correction').remove();
 
-				$('correct_box').update($('hidden-correction').innerHTML);
-				$('hidden-correction').remove();
+					initialize_gmaps(results[0].geometry.location.lat(), results[0].geometry.location.lng());
 
-				initialize_gmaps(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-
-				$('address').value = shipping.street;
-				$('town').value = shipping.city;
-				$('postcode').value = shipping.postcode;
-				var country = shipping.country_id;
-				if($('region_id').childElements('option').length){
-					$('region').hide();
-					$('region_id')[shipping.region_id].selected = true;
-				} else {
-					$('region_id').hide();
-					$('region').value = shipping.region;
-				}
-				
-				data.forEach(function(element){
-					// if the data provided is premise level
-					if(typeof element.route !== "undefined" && typeof element.street_number !== "undefined"){
-						var address = '';					
-
-						var region = '';
-						if(typeof element.administrative_area_level_1 !== "undefined"){
-							region = element.administrative_area_level_1.long_name;
-						}
-
-						var postal_code = '';
-						if(typeof element.postal_code !== "undefined"){
-							postal_code = element.postal_code.long_name;
-						}
-
-						var locality = '';
-						if(typeof element.locality !== "undefined"){
-							locality = element.locality.long_name;
-						}
-
-						var route = '';
-						if(typeof element.route !== "undefined"){
-							route = element.route.long_name;
-						}
-
-						var street_number = '';
-						if(typeof element.street_number !== "undefined"){
-							street_number = element.street_number.long_name;
-						}
-						if(element.formatted.indexOf(route) > element.formatted.indexOf(street_number))
-							address = street_number + " " + route;
-						else						
-							address = route + " " + street_number;
-
-
-						var combined_address = address;
-						if(combined_address != '' && locality != ''){
-							combined_address += ', '+locality;
-						}
-						if(combined_address != '' && postal_code != ''){
-							combined_address += ', '+postal_code;
-						}
-						if(combined_address != '' && region != ''){
-							combined_address += ', '+region;
-						}
-
-						var html = '<li data-region="'+region+'" data-postcode="'+postal_code+'" data-town="'+locality+'" data-street="'+ address +'"><input type="radio" class="" name="option"><span>' + combined_address +'</span></li>';
-						$('crafty-correct').down('ul').insert({top : html});
+					$('address').value = shipping.street;
+					$('town').value = shipping.city;
+					$('postcode').value = shipping.postcode;
+					var country = shipping.country_id;
+					if($('region_id').childElements('option').length){
+						$('region').hide();
+						$('region_id')[shipping.region_id].selected = true;
+					} else {
+						$('region_id').hide();
+						$('region').value = shipping.region;
 					}
-				});
-				//if we click on any suggestion, disable manual input
-				$$('#crafty-correct li:not(.manual) input').each(function(elem){
-					elem.observe('click',function(){
-						$$('.crafty-input').each(function(elem){
-							elem.disable();
+					
+					data.forEach(function(element){
+						// if the data provided is premise level
+						if(typeof element.route !== "undefined" && typeof element.street_number !== "undefined"){
+							var address = '';					
+
+							var region = '';
+							if(typeof element.administrative_area_level_1 !== "undefined"){
+								region = element.administrative_area_level_1.long_name;
+							}
+
+							var postal_code = '';
+							if(typeof element.postal_code !== "undefined"){
+								postal_code = element.postal_code.long_name;
+							}
+
+							var locality = '';
+							if(typeof element.locality !== "undefined"){
+								locality = element.locality.long_name;
+							}
+
+							var route = '';
+							if(typeof element.route !== "undefined"){
+								route = element.route.long_name;
+							}
+
+							var street_number = '';
+							if(typeof element.street_number !== "undefined"){
+								street_number = element.street_number.long_name;
+							}
+							if(element.formatted.indexOf(route) > element.formatted.indexOf(street_number))
+								address = street_number + " " + route;
+							else						
+								address = route + " " + street_number;
+
+
+							var combined_address = address;
+							if(combined_address != '' && locality != ''){
+								combined_address += ', '+locality;
+							}
+							if(combined_address != '' && postal_code != ''){
+								combined_address += ', '+postal_code;
+							}
+							if(combined_address != '' && region != ''){
+								combined_address += ', '+region;
+							}
+
+							var html = '<li data-region="'+region+'" data-postcode="'+postal_code+'" data-town="'+locality+'" data-street="'+ address +'"><input type="radio" class="" name="option"><span>' + combined_address +'</span></li>';
+							$('crafty-correct').down('ul').insert({top : html});
+						}
+					});
+					//if we click on any suggestion, disable manual input
+					$$('#crafty-correct li:not(.manual) input').each(function(elem){
+						elem.observe('click',function(){
+							$$('.crafty-input').each(function(elem){
+								elem.disable();
+							});
 						});
 					});
-				});
-				//if we click on manual correct, enable manual input
-				$$('#crafty-correct li.manual input')[0].observe('click',function(){
-					$$('.crafty-input').each(function(elem){
-						elem.enable();
+					//if we click on manual correct, enable manual input
+					$$('#crafty-correct li.manual input')[0].observe('click',function(){
+						$$('.crafty-input').each(function(elem){
+							elem.enable();
+						});
 					});
-				});
-				//when we press the update button
-				$('button-crafty-modify').observe('click',function(){
-					//check if a suggestion is selected
-					var elem = $$('#crafty-correct li:not(.manual) input[type=radio]:checked');
-					if(elem.length == 1){
-						//gather all data and copy it to the form.
-						var li = elem[0].up('li');
-						$('address').value = li.readAttribute('data-street');
-						$('town').value = li.readAttribute('data-town');
-						$('postcode').value = li.readAttribute('data-postcode');
-						$('region').value = li.readAttribute('data-region');
-					} else {
-						//if it's manual & region dropdown is provided, copy the selected region value to the region form element.
-						if($('region_id').childElements('option').length){
-							$('region').value = $('region_id').options[$('region_id').selectedIndex].innerHTML;
+					//when we press the update button
+					$('button-crafty-modify').observe('click',function(){
+						//check if a suggestion is selected
+						var elem = $$('#crafty-correct li:not(.manual) input[type=radio]:checked');
+						if(elem.length == 1){
+							//gather all data and copy it to the form.
+							var li = elem[0].up('li');
+							$('address').value = li.readAttribute('data-street');
+							$('town').value = li.readAttribute('data-town');
+							$('postcode').value = li.readAttribute('data-postcode');
+							$('region').value = li.readAttribute('data-region');
+						} else {
+							//if it's manual & region dropdown is provided, copy the selected region value to the region form element.
+							if($('region_id').childElements('option').length){
+								$('region').value = $('region_id').options[$('region_id').selectedIndex].innerHTML;
+							}
 						}
-					}
-					// pass all form values to an ajax request & update.
-					new Ajax.Request('<?php echo Mage::getUrl('craftyclicksvalidate/ajax/update');?>',
-					{
-						method:'get',
-						parameters: {
-							street: $('address').getValue(),
-							city: $('town').getValue(),
-							postcode: $('postcode').getValue(),
-							region: $('region').getValue()
-						},
-						onSuccess: function(transport){
-							$('correct_box').update('<?php echo $conf['craftyclicksvalidate']['finish_text']; ?>');
-						}
+						// pass all form values to an ajax request & update.
+						new Ajax.Request('<?php echo Mage::getUrl('craftyclicksvalidate/ajax/update');?>',
+						{
+							method:'get',
+							parameters: {
+								street: $('address').getValue(),
+								city: $('town').getValue(),
+								postcode: $('postcode').getValue(),
+								region: $('region').getValue()
+							},
+							onSuccess: function(transport){
+								$('correct_box').update('<?php echo $conf['craftyclicksvalidate']['finish_text']; ?>');
+							}
+						});
 					});
-				});
-			
-			}
-		});
+				
+				}
+			});
+		}
 	}
 
 } );
