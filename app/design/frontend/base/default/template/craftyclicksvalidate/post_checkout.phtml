@@ -204,7 +204,15 @@ document.observe('dom:loaded', function() {
 					var country = shipping.country_id;
 					if($('region_id').childElements('option').length){
 						$('region').hide();
-						$('region_id')[shipping.region_id].selected = true;
+
+						var options = $$('select#region_id option');
+						var len = options.length;
+						for (var i = 0; i < len; i++) {
+						    if(options[i].value == shipping.region_id){
+						    	options[i].selected = true;
+						    }
+						}
+						//$('region_id')[shipping.region_id].selected = true;
 					} else {
 						$('region_id').hide();
 						$('region').value = shipping.region;
